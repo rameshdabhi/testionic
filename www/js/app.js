@@ -24,17 +24,33 @@ app.run(function($ionicPlatform) {
   });
 });
 
-app.service("getBillingData",["$http","$log",getBillingData]);
-app.controller("billingCtrl",["$scope","$log",billingCtrl]);
 
-function billingCtrl($scope,$log) {
+function billingCtrl($scope,billingData,$log) {
   $scope.billingData = [];
 
   $scope.refresh = function(){
-    alert("refresh called!");
+    billingData.getBillingData($scope);
   };
 }
 
-function getBillingData($http,$log){
+function billingData($http,$log){
+  this.getBillingData = function ($scope) {
+      // $http({method: "jsonp", url: "http://192.168.1.105:3000/api/testbillings/initApp?callback=JSON_CALLBACK"})
+      $http.get("http://192.168.1.105:3000/api/testbillings/initApp")
+      .success(function(data,status){
+        console.log(data);
+        console.log(data.initApp.billDimensions);
+        $scope.billingData = data.initApp.billDimensions;
+      })
+      .error(function(err,status){
+        console.log(err);
+      })
+      .finally(function() {
+       // Stop the ion-refresher from spinning
+       $scope.$broadcast('scroll.refreshComplete');
+     });;
+  }
+}
 
-};
+app.service("billingData",["$http","$log",billingData]);
+app.controller("billingCtrl",["$scope","billingData","$log",billingCtrl]);
