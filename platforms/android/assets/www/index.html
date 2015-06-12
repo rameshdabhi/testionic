@@ -30,7 +30,7 @@
    
    
   <ion-header-bar class="bar-energized">
-    <h1 class="title">Billing Details!</h1>
+    <h1 class="title">Billing Details</h1>
     <button class="button" data-ng-click="refresh();">
       <i class="icon ion-refresh"></i>
     </button>
@@ -38,24 +38,26 @@
   <ion-content>
     <ion-refresher
       pulling-text="Pull to refresh..."
+      refreshing-text="Refreshing..."
       on-refresh="refresh();">
     </ion-refresher>
+    <div data-ng-show="billingData.length <= 0">No records found. Pull to refresh or click on the refresh button.</div>
     <div class="card" data-ng-repeat="billItem in billingData">
       <div class="item item-divider">
         {{billItem.month}}
       </div> 
-      <div class="item">
+      <div class="item item-body">
         <div class="row">
           <div class="col">Total Bills</div>
           <div class="col">{{billItem.totalBills}}</div>
         </div>
         <div class="row">
           <div class="col">Total Amount</div>
-          <div class="col">{{billItem.totalAmount}}</div>
+          <div class="col">{{billItem.totalAmount | number:4}}</div>
         </div>
         <div class="row">
           <div class="col">Average</div>
-          <div class="col">{{billItem.average}}</div>
+          <div class="col">{{billItem.average | number:4}}</div>
         </div>
       </div>
     </div>

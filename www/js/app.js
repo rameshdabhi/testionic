@@ -29,28 +29,36 @@ function billingCtrl($scope,billingData,$log) {
   $scope.billingData = [];
 
   $scope.refresh = function(){
+    console.log("refreshing....");
     billingData.getBillingData($scope);
+    console.log("refreshed!!!");
   };
 }
 
-function billingData($http,$log){
+function billingData($http,$q,$ionicPopup,$log){
   this.getBillingData = function ($scope) {
+      console.log("called getBillingData");
       // $http({method: "jsonp", url: "http://192.168.1.105:3000/api/testbillings/initApp?callback=JSON_CALLBACK"})
       $http.get("http://192.168.1.105:3000/api/testbillings/initApp")
       .success(function(data,status){
-        console.log(data);
-        console.log(data.initApp.billDimensions);
+        console.log("got data");
         $scope.billingData = data.initApp.billDimensions;
+        console.log("set data to array");
       })
       .error(function(err,status){
-        console.log(err);
+        console.log("error occured: %s",err);
+        $ionicPopup.alert({
+         title: 'Oops! An error occured.',
+         template: err
+        });
       })
       .finally(function() {
-       // Stop the ion-refresher from spinning
-       $scope.$broadcast('scroll.refreshComplete');
-     });;
+        console.log($scope.billingData);
+        //Stop the ion-refresher from spinning
+        $scope.$broadcast('scroll.refreshComplete');
+      });
   }
 }
 
-app.service("billingData",["$http","$log",billingData]);
+app.service("billingData",["$http","$ionicPopup","$log",billingData]);
 app.controller("billingCtrl",["$scope","billingData","$log",billingCtrl]);
